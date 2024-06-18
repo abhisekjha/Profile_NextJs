@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Prisma schema
+// After changing model, run "npx prisma migrate dev" to create DB tables
+
+model User {
+  id          Int             @id @default(autoincrement())
+  username    String          @unique
+  email       String          @unique
+  credentials Credential[]
+  addresses   WalletAddress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model WalletAddress {
+  address String @unique
+  user    User   @relation(fields: [userId], references: [id])
+  userId  Int
+}
+
+// WebAuthn credential
+model Credential {
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  name       String?
+  externalId String   @unique // Base64url
+  publicKey  Bytes    @unique // Make sure to retrieve as Uint8Array
+  signCount  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([externalId])
+}
