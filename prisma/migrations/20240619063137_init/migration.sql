@@ -2,16 +2,15 @@
 CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "username" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL
 );
 
 -- CreateTable
-CREATE TABLE "WalletAddress" (
+CREATE TABLE "Address" (
     "address" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
-    CONSTRAINT "WalletAddress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "Address_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -31,10 +30,7 @@ CREATE TABLE "Credential" (
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE UNIQUE INDEX "WalletAddress_address_key" ON "WalletAddress"("address");
+CREATE UNIQUE INDEX "Address_address_key" ON "Address"("address");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Credential_externalId_key" ON "Credential"("externalId");

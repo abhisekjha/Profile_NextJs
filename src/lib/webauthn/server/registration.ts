@@ -14,7 +14,7 @@ const HOST_SETTINGS = {
 
 //Get user's entered params from registration form
 // Returned options can be passed to @simplewebauthn/browser's startRegistration()
-export const getRegistrationOptions = async (email: string, username: string): Promise<PublicKeyCredentialCreationOptionsJSON> => {
+export async function getRegistrationOptions(username: string): Promise<PublicKeyCredentialCreationOptionsJSON> {
 
     //Note: will generate random userID by default, may not be coherent with DB
     const regOptions =  await generateRegistrationOptions({
@@ -22,9 +22,8 @@ export const getRegistrationOptions = async (email: string, username: string): P
         rpName: process.env.SERVICE_NAME as string || 'example site name',
         //Domain name
         rpID: process.env.RPID as string || 'localhost',
-        userName: email,
+        userName: username,
         challenge: await generateChallenge(),
-        userDisplayName: username,
     });
 
     //Save created challenge to user's session cookie
@@ -34,11 +33,10 @@ export const getRegistrationOptions = async (email: string, username: string): P
 }
 
 //Accepts the value returned by @simplewebauthn/browser's startRegistration(), and verifies it
-export const verifyRegistration = async (
+export async function verifyRegistration(
     credential: RegistrationResponseJSON,
-    email: string,
     username: string,
-) => {
+) {
     if(credential === null) throw new Error("Invalid credential");
 
     let verification: VerifiedRegistrationResponse;
@@ -53,8 +51,8 @@ export const verifyRegistration = async (
             ...HOST_SETTINGS,
         });
     } catch(error) {
-        console.error(error);
-        throw error;
+        const e = error as Error;
+        throw new Error(`Credential Verification failed: ${e.message}`);
     }
 
     if(!verification.verified) throw new Error("Registration verification failed.");
@@ -63,14 +61,13 @@ export const verifyRegistration = async (
 
     if (credentialID == null || credentialPublicKey == null) throw new Error("Registration failed");
 
-    //Check if username and email are available for registration
-    if(await doesUserExist(email, username)) throw new Error("Invalid identification for registration");
+    //Check if username is available for registration
+    if(await doesUserExist(username)) throw new Error("Invalid identification for registration");
 
     //Save valid user registration to DB
     try {
         const user = await prisma.user.create({
             data: {
-                email,
                 username,
                 credentials: {
                     create: {
@@ -82,9 +79,9 @@ export const verifyRegistration = async (
         });
         await setAuthedUserCookie(user.id, user.username);
         // console.log(`Registered new user, id = ${user.id}`);
-    } catch(e) {
-        console.error(e);
-        throw new Error("User could not be created");
+    } catch(error) {
+        const e = error as Error;
+        throw new Error(`Database registration error: ${e.message}`);
     }
 
 }

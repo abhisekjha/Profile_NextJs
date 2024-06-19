@@ -32,6 +32,11 @@ export async function getAuthedUsername() {
     return session.username;
 }
 
+export async function isAuthenticated(): Promise<boolean> {
+    const session = await getSession();
+    return session.isLoggedIn;
+}
+
 //Clear cookies and revalidate to reset auth session
 export async function clearSession() {
     getSession().then((a) => a.destroy());

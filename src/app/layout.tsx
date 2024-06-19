@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ApolloClient, InMemoryCache, ApolloProvider, gql } from '@apollo/client';
-import Logout from "@/components/Logout";
+import NavBar from "@/components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +25,11 @@ export default function RootLayout({
   return (
     <html lang="en">
     {/*<ApolloProvider client={client}>*/}
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <NavBar>
+          {children}
+        </NavBar>
+      </body>
     {/*</ApolloProvider>*/}
     </html>
   );

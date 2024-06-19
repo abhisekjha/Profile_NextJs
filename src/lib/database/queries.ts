@@ -2,50 +2,26 @@ import prisma from '@/lib/database/prismaClient';
 
 //---Prisma DB Queries ---
 
-export async function doesUserExist(email: string, username: string): Promise<boolean> {
-    const user = await prisma.user.findFirst({
-        where: {
-            OR: [
-                { email: email },
-                { username: username },
-            ]
-        },
-    });
-    return user !== null;
+export async function doesUserExist(username: string): Promise<boolean> {
+   try {
+       const user = await prisma.user.findUnique({ where: { username: username } });
+       return user != null;
+   } catch (e) {
+       const error = e as Error;
+       console.log(error.message);
+       throw new Error("DB registration failed");
+   }
 }
 
-export async function getCredentialExternalIdByEmail(email: string): Promise<string[]> {
-    try {
-        const user = await prisma.user.findUnique({
-           where: { email },
-           select: {
-               credentials: {
-                   select: {
-                       externalId: true,
-                   }
-               }
-           }
-        });
-        if(user && user.credentials){
-            return user.credentials.map(cred => cred.externalId);
-        } else return [];
-    } catch (e) {
-        console.error(e);
-        throw new Error(`Failed to retrieve credentials for ${email}: ${e}`);
-    }
-}
-
-export async function getCredentialData(externalId: string) {
+export async function getAuthenticationData(externalId: string) {
     const cred = await prisma.credential.findUnique({
         select: {
             id: true,
             publicKey: true,
             signCount: true,
-            userId: true,
             user: {
                 select: {
                     id: true,
-                    email: true,
                     username: true,
                 }
             }
@@ -54,7 +30,7 @@ export async function getCredentialData(externalId: string) {
             externalId: externalId
         }
     });
-    if (!cred) throw new Error();
+    if (!cred) throw new Error("Credential not found");
     return cred;
 }
 
@@ -62,13 +38,12 @@ export async function getUserByUserId(userId: number) {
     const user = await prisma.user.findUnique({
         select: {
             id: true,
-            email: true,
             username: true,
         },
         where: {
             id: userId
         }
     });
-    if (!user) throw new Error();
+    if (!user) throw new Error("User not found");
     return user;
 }
