@@ -41,7 +41,6 @@ model Credential {
   id         Int      @id @default(autoincrement())
   user       User     @relation(fields: [userId], references: [id])
   userId     Int
-  name       String?
   externalId String   @unique // Base64url
   publicKey  Bytes    @unique // Make sure to retrieve as Uint8Array
   signCount  Int      @default(0)

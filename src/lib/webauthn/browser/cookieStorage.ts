@@ -24,12 +24,12 @@ export async function setAuthedUserCookie(userId: number, username: string) {
     session.username = username;
     session.isLoggedIn = true;
     await session.save();
+    redirect("/"); //Redirect to home page after successful login
 }
 
-export async function getAuthedUsername() {
+export async function getAuthedUsername(): Promise<string | null> {
     const session = await getSession();
-    if(!session.isLoggedIn) return null;
-    return session.username;
+    return session?.isLoggedIn && session.username ? session.username : null;
 }
 
 export async function isAuthenticated(): Promise<boolean> {

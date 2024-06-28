@@ -19,6 +19,8 @@ export default function PasskeyLogin() {
             const authResp: AuthenticationResponseJSON = await startAuthentication(authOpt);
             //2 Verify resp
             await verifyAuth(authResp);
+            //go to login page
+
         } catch(e) {
             const err = e as Error;
             setError(err.message);

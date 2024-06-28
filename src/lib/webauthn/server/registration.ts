@@ -65,8 +65,9 @@ export async function verifyRegistration(
     if(await doesUserExist(username)) throw new Error("Invalid identification for registration");
 
     //Save valid user registration to DB
+    let user;
     try {
-        const user = await prisma.user.create({
+        user = await prisma.user.create({
             data: {
                 username,
                 credentials: {
@@ -77,11 +78,11 @@ export async function verifyRegistration(
                 },
             },
         });
-        await setAuthedUserCookie(user.id, user.username);
-        // console.log(`Registered new user, id = ${user.id}`);
     } catch(error) {
-        const e = error as Error;
-        throw new Error(`Database registration error: ${e.message}`);
+        // const e = error as Error;
+        // console.log(error);
+        // throw new Error(`Database registration error: ${error.message}`);
+        throw new Error(`Database registration error`);
     }
-
+    await setAuthedUserCookie(user.id, user.username);
 }

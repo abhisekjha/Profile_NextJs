@@ -2,11 +2,10 @@
 
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
-import PasskeyRegister from "@/components/PasskeyRegister";
-import PasskeyLogin from "@/components/PasskeyLogin";
-import {useEffect, useState} from "react";
+import PasskeyRegister from "@/app/login/PasskeyRegister";
+import PasskeyLogin from "@/app/login/PasskeyLogin";
+import React, {useEffect, useState} from "react";
 import {supported} from "@github/webauthn-json";
-import {isAuthenticated} from "@/lib/webauthn/browser/cookieStorage";
 
 export default function Component() {
     const [username, setUsername] = useState("");
