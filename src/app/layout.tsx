@@ -4,8 +4,8 @@ import "@/styles/globalsDefault.css";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import Header from "@/components/home/Header";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import { WagmiProvider } from "wagmi";
+import {Web3Providers} from "@/lib/web3/web3Providers";
+
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,8 +17,6 @@ const fontSans = FontSans({
     variable: "--font-sans",
 });
 
-const queryClient = new QueryClient()
-import { wagmiConfig } from '@/lib/wagmi/wagmiConfig';
 
 export default function RootLayout({
   children,
@@ -26,19 +24,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <WagmiProvider config={wagmiConfig}>
-          <QueryClientProvider client={queryClient}>
-          <html lang="en">
+
+      <html lang="en">
       <body
           className={cn("min-h-screen bg-background font-sans antialiased",
           fontSans.variable
       )}
       >
       <Header />
-      {children}
+      <Web3Providers>{children}</Web3Providers>
       </body>
     </html>
-          </QueryClientProvider>
-      </WagmiProvider>
   );
 }

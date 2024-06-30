@@ -17,7 +17,6 @@ export interface SessionData {
     userId?: number;
     username?: string;
     challenge?: string;
-    isLoggedIn: boolean;
 }
 
 export async function getSession() {

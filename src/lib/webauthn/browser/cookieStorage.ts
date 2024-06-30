@@ -22,19 +22,23 @@ export async function setAuthedUserCookie(userId: number, username: string) {
     const session = await getSession();
     session.userId = userId;
     session.username = username;
-    session.isLoggedIn = true;
     await session.save();
     redirect("/"); //Redirect to home page after successful login
 }
 
 export async function getAuthedUsername(): Promise<string | null> {
     const session = await getSession();
-    return session?.isLoggedIn && session.username ? session.username : null;
+    return session.username ? session.username : null;
+}
+
+export async function getAuthedUserId(): Promise<number | null> {
+    const session = await getSession();
+    return session.userId ? session.userId : null;
 }
 
 export async function isAuthenticated(): Promise<boolean> {
     const session = await getSession();
-    return session.isLoggedIn;
+    return !!session.userId;
 }
 
 //Clear cookies and revalidate to reset auth session

@@ -1,20 +1,4 @@
 import Footer from "@/components/home/Footer";
-//
-// export default async function Home() {
-//
-//     const auth = await getAuthedUsername();
-//
-//     return (
-//         <div className="flex min-h-screen w-full flex-col">
-//             <Header auth={auth}/>
-//             <main className="flex-1">
-//             </main>
-//
-//             <Footer/>
-//         </div>
-//     )
-// }
-
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -22,7 +6,6 @@ export default async function Home() {
 
     return (
         <div className="flex min-h-screen w-full flex-col bg-gradient-to-br">
-            {/*<Header />*/}
             <main className="flex-1 container mx-auto px-4 py-12">
                 <div className="text-center mb-12">
                     <h1 className="text-5xl font-bold text-primary mb-4">Welcome to Smart Pay</h1>

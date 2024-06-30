@@ -19,7 +19,6 @@
 # misc
 .DS_Store
 *.pem
-.idea
 .idea/
 
 # debug
@@ -37,3 +36,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pnpm
+pnpm-lock.yaml
+
+# db files
+/prisma/dev.db

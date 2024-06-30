@@ -5,6 +5,7 @@ import { startRegistration } from "@simplewebauthn/browser";
 import { getRegistrationOptions, verifyRegistration } from "@/lib/webauthn/server/registration";
 import { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/types";
 import { Button } from "@/components/ui/button";
+import {isValidUsernameFormat} from "@/util";
 
 export default function PasskeyRegister({ username }: {username: string}) {
     const [error, setError] = useState("");
@@ -12,6 +13,7 @@ export default function PasskeyRegister({ username }: {username: string}) {
     const onSubmit = async (event: FormEvent) => {
         event.preventDefault();
         try {
+            if(!isValidUsernameFormat(username)) throw new Error("Must be three or more URL safe characters.");
             //0. Get registration options (from server)
             const regOpt: PublicKeyCredentialCreationOptionsJSON = await getRegistrationOptions(username);
             //0.5 challenge cookie is set in browser

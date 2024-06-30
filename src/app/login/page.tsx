@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input"
 import PasskeyRegister from "@/app/login/PasskeyRegister";
 import PasskeyLogin from "@/app/login/PasskeyLogin";
 import React, {useEffect, useState} from "react";
-import {supported} from "@github/webauthn-json";
 
 export default function Component() {
     const [username, setUsername] = useState("");
@@ -15,7 +14,7 @@ export default function Component() {
         const checkAvailability = async () => {
             const available =
                 await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-            setIsAvailable(available && supported());
+            setIsAvailable(available);
         };
         checkAvailability();
     }, []);

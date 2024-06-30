@@ -1,9 +1,9 @@
 'use server';
 
 import { generateAuthenticationOptions, verifyAuthenticationResponse } from "@simplewebauthn/server";
-import { generateChallenge } from "@/lib/webauthn/util";
+import { generateChallenge } from "@/lib/sessionUtil";
 import { getChallengeCookie, setChallengeCookie, setAuthedUserCookie } from "@/lib/webauthn/browser/cookieStorage";
-import {getAuthenticationData } from "@/lib/database/queries";
+import {getAuthenticationData } from "@/lib/database/userQueries";
 import prisma from "@/lib/database/prismaClient"
 import {AuthenticationResponseJSON} from "@simplewebauthn/types";
 
@@ -20,7 +20,7 @@ export async function getAuthenticationOptions() {
     //Will prompt user with credentials to select from, since no specific cred specified
     const authOptions = await generateAuthenticationOptions({
         rpID: process.env.RPID as string,
-        challenge: await generateChallenge() as string,
+        challenge: generateChallenge(),
     });
     await setChallengeCookie(authOptions.challenge);
     return authOptions;
@@ -52,7 +52,6 @@ export async function verifyAuth(authResp: AuthenticationResponseJSON) {
                 signCount: verification.authenticationInfo.newCounter,
             }
         });
-
     } catch (e) {
         console.error(e);
         throw new Error("Authentication verification failed");

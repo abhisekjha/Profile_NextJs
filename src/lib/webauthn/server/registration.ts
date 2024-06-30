@@ -2,10 +2,11 @@
 
 import prisma from '@/lib/database/prismaClient';
 import { generateRegistrationOptions, VerifiedRegistrationResponse, verifyRegistrationResponse } from "@simplewebauthn/server";
-import { clean, generateChallenge } from "@/lib/webauthn/util";
+import { clean, generateChallenge } from "@/lib/sessionUtil";
 import { PublicKeyCredentialCreationOptionsJSON, RegistrationResponseJSON } from "@simplewebauthn/types";
 import { getChallengeCookie, setChallengeCookie, setAuthedUserCookie } from "@/lib/webauthn/browser/cookieStorage";
-import { doesUserExist } from "@/lib/database/queries";
+import { doesUserExist } from "@/lib/database/userQueries";
+import {isValidUsernameFormat} from "@/util";
 
 const HOST_SETTINGS = {
     expectedOrigin: process.env.SITE_URL ?? "http://localhost:3000",
@@ -23,7 +24,7 @@ export async function getRegistrationOptions(username: string): Promise<PublicKe
         //Domain name
         rpID: process.env.RPID as string || 'localhost',
         userName: username,
-        challenge: await generateChallenge(),
+        challenge: generateChallenge(),
     });
 
     //Save created challenge to user's session cookie
@@ -62,7 +63,7 @@ export async function verifyRegistration(
     if (credentialID == null || credentialPublicKey == null) throw new Error("Registration failed");
 
     //Check if username is available for registration
-    if(await doesUserExist(username)) throw new Error("Invalid identification for registration");
+    if(await doesUserExist(username) || !isValidUsernameFormat(username)) throw new Error("Registration failed: invalid username");
 
     //Save valid user registration to DB
     let user;
@@ -72,7 +73,7 @@ export async function verifyRegistration(
                 username,
                 credentials: {
                     create: {
-                        externalId: await clean(credentialID),
+                        externalId: clean(credentialID),
                         publicKey: Buffer.from(credentialPublicKey),
                     },
                 },

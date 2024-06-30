@@ -13,6 +13,7 @@ export async function doesUserExist(username: string): Promise<boolean> {
    }
 }
 
+//Get auth data by credential externalId
 export async function getAuthenticationData(externalId: string) {
     const cred = await prisma.credential.findUnique({
         select: {
@@ -46,4 +47,23 @@ export async function getUserByUserId(userId: number) {
     });
     if (!user) throw new Error("User not found");
     return user;
+}
+
+export async function saveAddress(userId: number, address: string) {
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId,
+        },
+    });
+
+    if (!user) throw new Error("User not found");
+
+    const updatedUser = await prisma.address.create({
+        data: {
+            address: address,
+            user: {
+                connect: { id: user.id },
+            },
+        },
+    });
 }
