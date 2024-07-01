@@ -7,14 +7,19 @@ To run the development server:
 npm run dev
 ```
 
-To update DB schema:
+## DB
 
+To generate prisma client (initially or after prisma.schema edits)
+```bash
+prisma generate
+```
+
+To sync prisma schema with DB schema (to update db schema and keep existing data):
 ```bash
 prisma migrate dev
 ```
 
-For DB console:
-
+For DB console (view/edit data manually)
 ```bash
 npx prisma studio
 ```
