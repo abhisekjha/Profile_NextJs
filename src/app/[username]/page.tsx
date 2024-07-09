@@ -1,6 +1,7 @@
 import {getAuthedUsername} from "@/lib/webauthn/browser/cookieStorage";
 import VerifyWallet from "@/app/[username]/VerifyWallet";
 import prisma from "@/lib/database/prismaClient";
+import ProfileView from "@/app/[username]/profile/view";
 
 export default async function Page({ params }: { params: { username: string } }) {
 
@@ -31,6 +32,8 @@ export default async function Page({ params }: { params: { username: string } })
             {isAuthed &&
               <>
                 <VerifyWallet />
+                <ProfileView params={params} />
+                    
               </>
             }
 
